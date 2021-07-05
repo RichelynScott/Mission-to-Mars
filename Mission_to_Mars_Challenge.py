@@ -81,3 +81,64 @@ df.to_html()
 # ALWAYS REMEMBER TO EXIT THE AUTOMATED BROWSER
 browser.quit()
 
+# ### D1: Scrape High-Resolution Mars' Hemisphere Images and Titles
+
+### Hemispheres
+
+# 1. Use browser to visit the URL 
+url = 'https://marshemispheres.com/'
+
+browser.visit(url)
+# Optional delay for loading the page
+browser.is_element_present_by_css('div.list_text', wait_time=1)
+
+# 2. Create a list to hold the images and titles.
+hemisphere_image_urls = []
+
+# 3. Write code to retrieve the image urls and titles for each hemisphere.
+
+for x in range (4):
+    hemispheres = {}
+    
+    #Parse the resulting html with soup
+    html = browser.html
+    hem_soup = soup(html, 'html.parser')
+    
+    # Find & Click Hemisphere Link
+    hem_link = browser.find_by_tag('h3')[x]
+    hem_link.click()    
+     
+    # Parse the resulting html with soup (initially had this before the find & click but was experiencing and No object error so added 2 instances)
+    html = browser.html
+    hem_soup = soup(html, 'html.parser')
+    
+    browser.is_element_present_by_css('div.list_text', wait_time=1)
+    
+    
+    # Retrieve the title
+    hem_title = hem_soup.find('h2').get_text() 
+        
+    # Find the relative image url
+        
+    hemi_img_url_rel = hem_soup.find('img', class_='wide-image').get('src') 
+    
+    # Use the base url to create an absolute url
+    img_url = f'https://marshemispheres.com/{hemi_img_url_rel}'
+    
+    #storing results in the dictionary
+    hemispheres = {
+        'FullRes_image_url': img_url,
+        'Title': hem_title
+        
+    }
+    
+    #appending to dict
+    hemisphere_image_urls.append(hemispheres)
+    
+    browser.back()
+
+# 4. Print the list that holds the dictionary of each image url and title.
+hemisphere_image_urls
+
+# 5. Quit the browser
+browser.quit()
